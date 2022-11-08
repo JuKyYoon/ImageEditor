@@ -1,0 +1,39 @@
+
+.modal {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.6);
+
+    .loadingModal {
+        width: 20vw;
+        height: 20vw;
+        background-color: #171c24;
+        color : white;
+        position: relative;
+        box-sizing: border-box;
+        margin: 50px auto;
+        border-radius: 20px;
+        text-align: center;
+        display: flex;
+        // padding : 50px;
+
+        
+
+
+        .loadingModal-content {
+            margin : auto;
+            font-size: 1.9em;
+        }
+    } 
+
+    @media (max-width: 1520px) {
+        .loadingModal {
+            width: 300px;
+            height: 300px;
+        }
+    }
+}
+

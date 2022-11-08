@@ -1,0 +1,510 @@
+.option-title {
+  font-size: 17px;
+  margin: 3%;
+  color: #688eff;
+}
+
+.sub-textmenu {
+  display: flex;
+  flex-direction: column;
+  height: 93vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.add-text {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 5%;
+
+  button {
+    background-color: #688eff;
+    border: 1px solid #688eff;
+    border-radius: 5px;
+    width: 160px;
+    height: 30px;
+  }
+
+  button:hover {
+    background-color: #84a3ff;
+  }
+}
+
+.text-font {
+  width: 150px;
+}
+
+.text,
+.text-font {
+  background-color: #eeeeee;
+  border: none;
+  border-bottom: 1px solid #d9d9d9;
+}
+
+.text:hover,
+.text-font:hover {
+  border-bottom: 1px solid black;
+  transition: 0.5s;
+}
+
+.size-align {
+  display: flex;
+  width: 100%;
+  margin-top: 10px;
+  margin-bottom: 10px;
+
+  .font-size {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 50%;
+
+    input[type="number"] {
+      margin-left: 5%;
+      height: 32px;
+      border-radius: 4px;
+      border: 1px solid #b8b8b8;
+      position: relative;
+      text-align: center;
+      font-size: 16px;
+      width: 80px;
+      outline: none;
+
+      background-image: url("../img/input.png");
+      background-position: center right;
+      background-size: contain;
+      background-repeat: no-repeat;
+      cursor: text;
+    }
+
+    input[type="number"]::-webkit-inner-spin-button {
+      -webkit-appearance: none !important;
+      opacity: 1 !important;
+      background: transparent !important;
+      border-width: 0px;
+      margin: 0;
+      border-left: 1px solid #b8b8b8;
+      height: 34px;
+      width: 23px;
+      cursor: pointer;
+      color : white;
+    }
+
+    input[type="number"]:disabled {
+      cursor: default;
+    }
+  }
+
+  .font-size-disabled {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 50%;
+
+    input[type="number"] {
+      margin-left: 5%;
+      height: 32px;
+      border-radius: 4px;
+      border: 1px solid #555555;
+      color : #555555;
+      position: relative;
+      text-align: center;
+      font-size: 16px;
+      width: 80px;
+      outline: none;
+
+      background-image: url("../img/input-disabled.png");
+      background-position: center right;
+      background-size: contain;
+      background-repeat: no-repeat;
+      cursor: text;
+    }
+
+    input[type="number"]::-webkit-inner-spin-button {
+      -webkit-appearance: none !important;
+      opacity: 1 !important;
+      background: transparent !important;
+      border-width: 0px;
+      margin: 0;
+      height: 34px;
+      width: 23px;
+      cursor: pointer;
+      color : white;
+      border-left: 1px solid #555555;
+    }
+
+    input[type="number"]:disabled {
+      cursor: default;
+    }
+  }
+
+  .text-align {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    label {
+      margin-bottom: 0;
+    }
+
+    .align-button {
+      display: flex;
+      justify-content: space-evenly;
+
+      label {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 5px;
+
+        button {
+          display: none;
+        }
+
+        button:active + svg {
+          fill: #365afc;
+        }
+
+        svg {
+          fill: #688eff;
+          width: 50%;
+          height: 50%;
+        }
+      }
+
+      label:hover {
+        background-color: #84a3ff;
+        cursor: pointer;
+        svg {
+          fill: white;
+        }
+      }
+    }
+
+    .align-button-disabled {
+      display: flex;
+      justify-content: space-evenly;
+
+      label {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 5px;
+
+        button {
+          display: none;
+        }
+
+        svg {
+          fill: #555555;
+          width: 50%;
+          height: 50%;
+        }
+      }
+    }
+  }
+}
+
+.font-weight {
+  display: flex;
+  justify-content: space-evenly;
+  width: 100%;
+  margin-top: 10px;
+  margin-bottom: 10px;
+
+  .bold {
+    width: 50px;
+    height: 50px;
+    background-color: #688eff;
+    border-radius: 5px;
+
+    label {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+    }
+
+    input[type="checkbox"] {
+      display: none;
+    }
+
+    svg {
+      width: 50%;
+      height: 50%;
+    }
+  }
+
+  .bold:hover {
+    background-color: #84a3ff;
+
+    label {
+      cursor: pointer;
+    }
+
+    svg {
+      fill: #365afc;
+    }
+  }
+
+  .bold-disabled {
+    width: 50px;
+    height: 50px;
+    // background-color: #555555;
+    border : 1px solid #555555;
+    border-radius: 5px;
+
+    label {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+    }
+
+    input[type="checkbox"] {
+      display: none;
+    }
+
+    svg {
+      width: 50%;
+      height: 50%;
+      fill : #555555;
+    }
+  }
+
+  .italic {
+    width: 50px;
+    height: 50px;
+    background-color: #688eff;
+    border-radius: 5px;
+
+    label {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+    }
+
+    input[type="checkbox"] {
+      display: none;
+    }
+
+    svg {
+      width: 50%;
+      height: 50%;
+    }
+  }
+
+  .italic:hover {
+    background-color: #84a3ff;
+    label {
+      cursor: pointer;
+    }
+  }
+
+  .italic:hover svg {
+    fill: #365afc;
+  }
+
+  .italic-disabled {
+    width: 50px;
+    height: 50px;
+    // background-color: #e6e6e6;
+    border : 1px solid #555555;
+    border-radius: 5px;
+
+    label {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+    }
+
+    input[type="checkbox"] {
+      display: none;
+    }
+
+    svg {
+      width: 50%;
+      height: 50%;
+      fill : #555555;
+    }
+  }
+  .underline {
+    width: 50px;
+    height: 50px;
+    background-color: #688eff;
+    border-radius: 5px;
+
+    label {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+    }
+
+    input[type="checkbox"] {
+      display: none;
+    }
+
+    svg {
+      width: 50%;
+      height: 50%;
+    }
+  }
+
+  .underline:hover {
+    background-color: #84a3ff;
+    label {
+      cursor: pointer;
+    }
+  }
+
+  .underline:hover svg {
+    fill: #365afc;
+  }
+
+  .underline-disabled {
+    width: 50px;
+    height: 50px;
+    // background-color: #e6e6e6;
+    border : 1px solid #555555;
+    border-radius: 5px;
+
+    label {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+    }
+
+    input[type="checkbox"] {
+      display: none;
+    }
+
+    svg {
+      width: 50%;
+      height: 50%;
+      fill : #555555;
+    }
+  }
+}
+
+.text-bg {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
+
+  input[type="checkbox"] {
+    display: none;
+  }
+
+  input[type="checkbox"] + label {
+    width: 7vmin;
+    height: 7vmin;
+    background-color: #688eff;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+  }
+
+  input[type="checkbox"] + label:hover {
+    background-color: #97b1ff;
+  }
+
+  input[type="checkbox"]:disabled + label {
+    color: #ababab;
+    background-color: #555555;
+  }
+
+  // input[type="checkbox"]:disabled + label:hover {
+  //   background-color: #688eff;
+  // }
+
+  input[type="checkbox"]:checked + label {
+    background-color: #365afc;
+    color: white;
+  }
+}
+
+.font-style {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  .fontfamily-button {
+    background-color: #688eff;
+    border: 1px solid #688eff;
+    border-radius: 5px;
+    width: 160px;
+    height: 30px;
+  }
+
+  .fontfamily-button:hover {
+    background-color: #d9d9d9;
+  }
+
+  .font-li:hover {
+    background-color: #c1c1c1;
+  }
+}
+
+.font-style-disabled {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .fontfamily-button {
+    // background-color: #e6e6e6;
+    border: 1px solid #555555;
+    color: #555555;
+    border-radius: 5px;
+    width: 160px;
+    height: 30px;
+  }
+
+  .fontfamily-button:hover {
+    background-color: #d9d9d9;
+  }
+
+  .font-li:hover {
+    background-color: #c1c1c1;
+  }
+}
+
+.font-ul {
+  list-style-type: none;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  font-size: 18px;
+  color: #666666;
+  position: absolute;
+  background: #d4d4d4;
+  z-index: 3;
+  margin-top: 440px;
+  width: 160px;
+  height: 400px;
+}
+
+.font-ul li {
+  padding: 10px 0 10px 18px;
+  width: 135px;
+}

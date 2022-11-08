@@ -1,0 +1,43 @@
+.history {
+  .current-state {
+
+  }
+  hr {
+    margin-top : 5px;
+    margin-bottom : 5px;
+    color : black;
+    border :3px solid #374357;
+  }
+  .stack-box {
+    display: flex;
+    justify-content: space-between;
+    cursor: pointer;
+    border: 1px solid black;
+    margin-bottom : 10px;
+  
+    .undo-stack {
+      margin-bottom: 1px;
+    }
+  
+    .link-image {
+      width: 10%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+  
+      svg {
+        width: 80%;
+        height: 80%;
+        opacity: 0;
+      }
+    }
+  }
+  
+  .stack-box:hover {
+    svg {
+      opacity: 1;
+    }
+  }
+  
+}
+

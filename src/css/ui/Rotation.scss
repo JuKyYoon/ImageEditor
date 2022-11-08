@@ -1,0 +1,121 @@
+.sub-rotatemenu{
+  
+  .option-title{
+    font-size: 17px;
+    margin: 3%;
+  }
+  
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .rotate-degree{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 5%;
+  }
+  
+  .degree-button{
+    display: flex;
+    justify-content: space-around;
+  }
+  
+  .rotate-degree button{
+    width: 5vmin;
+    min-width : 50px;
+    height: 5vmin;
+    min-height : 50px;
+    border-radius: 5px;
+  }
+  
+  .rotate-degree button:hover{
+    background-color: #84a3ff;
+  }
+  
+  .rotate-clock{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 5%;
+  }
+  
+  .clock-button{
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    margin-top: 5%;
+  }
+  
+  .clock-button div{
+    width: 7vmin;
+    height: 7vmin;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+  }
+  
+  .clock-button div:hover{
+    background-color: #84a3ff;
+  }
+  
+  #clockwise{
+    // background-image: url(../img/rotate-left.svg);
+    // background-repeat: no-repeat;
+    // fill : white;
+    width: 5vmin;
+    height: 5vmin;
+    min-width: 50px;
+    min-height : 50px;
+    background-size: contain;
+  }
+  
+  #c-clockwise{
+    // background-image: url(../img/rotate-right.svg);
+    // background-repeat: no-repeat;
+    fill : white;
+    width: 5vmin;
+    height: 5vmin;
+    min-width: 50px;
+    min-height : 50px;
+    background-size: contain;
+  }
+
+  .rotation-svg {
+    pointer-events: none;
+    min-width: 50px;
+    min-height : 50px;
+    width: 5vmin;
+    height: 5vmin;
+    // width : 80px;
+    fill : white;
+  }
+  
+  .rotate-input{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 5%;
+  }
+  
+  .rotate-input input{
+    background-color: #222b36;
+    border-bottom: 1px solid #D9D9D9;
+    width: 7vmin;
+    min-width : 66px;
+    height: 3vmin;
+    min-height : 22px;
+    margin: 5%;
+  }
+  
+  .rotate-input input:hover{
+    border-bottom: 1px solid white;
+    transition: .5s;
+  }
+  
+  .rotate-input input:focus{
+    border-bottom: 1px solid white !important;
+  }
