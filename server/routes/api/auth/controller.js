@@ -4,35 +4,20 @@ const secretObj = require('../../../config/jwt');
 const crypto = require('crypto');
 const moment = require('moment');
 
+/**
+ * 아이디 중복 체크
+ * @param {HttpRequest} req 
+ * @param {HttpResponse} res 
+ */
 exports.dupCheck = (req, res) => {
-  // const database = new Database();
   const {id} = req.body;
   let query = `SELECT EXISTS (SELECT * FROM USERS WHERE userid = "${id}") as success`;
-
-  // const respond = (result) => {
-  //   if(result[0].success) {
-  //     res.status(200).json({
-  //       msg: 'exist'
-  //     })
-  //   }
-  //   else {
-  //     res.status(200).json({
-  //       msg: 'not exist'
-  //     })
-  //   }
-  // }
 
   const onError = (error) => {
     res.status(400).json({
       msg: error.message
     })
   }
-
-  // database.query(query)
-  // .then(respond)
-  // .then(database.end())
-  // .catch(onError)
-
 
   const respond = ({connection, result}) => {
     if(result[0].success) {
@@ -67,6 +52,11 @@ exports.dupCheck = (req, res) => {
 
 }
 
+/**
+ * 로그인
+ * @param {HttpRequest} req 
+ * @param {HttpResponse} res 
+ */
 exports.login = (req, res) => {
   const database = new Database();
   const { id, password } = req.body;
@@ -137,6 +127,11 @@ exports.login = (req, res) => {
 
 }
 
+/**
+ * 회원가입
+ * @param {HttpRequest} req 
+ * @param {HttpResponse} res 
+ */
 exports.register = (req, res) => {
   const database = new Database();
   const { id, password, answer, question} = req.body
@@ -178,6 +173,11 @@ exports.check = (req, res) => {
   })
 }
 
+/**
+ * 비밀번호 변경
+ * @param {HttpRequest} req 
+ * @param {HttpResponse} res 
+ */
 exports.changeUserPassword = (req, res) => {
   const database = new Database();
   const {id, current_password, new_password} = req.body;
@@ -237,6 +237,11 @@ exports.changeUserPassword = (req, res) => {
   .catch(onError)
 }
 
+/**
+ * 비밀번호 찾기
+ * @param {HttpRequest} req 
+ * @param {HttpResponse} res 
+ */
 exports.findPassword = (req, res) => {
   const database = new Database();
   const {id, question, answer} = req.body;
@@ -276,6 +281,11 @@ exports.findPassword = (req, res) => {
   .catch(onError)
 }
 
+/**
+ * 회원 탈퇴
+ * @param {HttpRequest} req 
+ * @param {HttpResponse} res 
+ */
 exports.delete = (req, res) => {
   const database = new Database();
   const {id, password, } = req.body;
