@@ -291,42 +291,55 @@ exports.changeUserPassword = (req, res) => {
  * @param {HttpResponse} res 
  */
 exports.findPassword = (req, res) => {
-  const database = new Database();
   const {id, question, answer} = req.body;
-  let query = `SELECT EXISTS (SELECT * FROM USERS WHERE userid="${id}" and question="${question}" and answer="${answer}") as success;`;
-  let new_password = Math.random().toString(36).substr(2,11);
-  const change = (result) => {
+  const params = [id, question, answer];
+
+  let query = `SELECT EXISTS (SELECT * FROM USERS WHERE userid=? and question=? and answer=?) as success;`;
+  let new_password = Math.random().toString(36).slice(2,11);
+  
+  const change = ({result, connection}) => {
     if(result[0].success) {
       let salt = crypto.randomBytes(64).toString('base64');
       let hashPassword = crypto.pbkdf2Sync(new_password, salt, 100000, 64, 'sha512').toString('base64');
-      let update_query = `UPDATE USERS SET password = "${hashPassword}", salt="${salt}" WHERE userid="${id}";`;
-      database.query(update_query)
-      .then(respond)
-      .catch(onError)
-    }
-    else {
-      res.status(200).json({
-        msg: 'not match'
-      })
+      let updateQuery = `UPDATE USERS SET password = ?, salt=? WHERE userid=?;`;
+      const updateParams = [hashPassword, salt, id]
+      return pool.safeQuery(connection, updateQuery, updateParams)
+    } else {
+      throw new Error('not match')
     }
   }
 
-  const respond = () => {
-    res.status(200).json({
-      msg: 'success',
-      password: new_password
+  const respond = ({connection, result}) => {
+    new Promise((resolve) => {
+      connection.release();
+      resolve();
+    })
+    .then(() => {
+      console.log("MySQL pool released: threadId " + connection.threadId);
+      res.status(200).json({
+        msg: 'success',
+        password: new_password
+      })
     })
   }
   
   const onError = (error) => {
-    res.status(400).json({
+    res.status(500).json({
       msg: error.message
     })
   }
 
-  database.query(query)
-  .then(change)
-  .catch(onError)
+  const check = (conn) => {
+    pool.safeQuery(conn, query, params)
+      .then(change)
+      .then(respond)
+      .catch(onError)
+      
+  }
+
+  pool.connect()
+    .then(check)
+    .catch(onError)
 }
 
 /**
