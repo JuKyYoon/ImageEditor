@@ -181,6 +181,11 @@ exports.register = (req, res) => {
    .catch(onError)
 }
 
+/**
+ * 로그아웃
+ * @param {HttpRequest} req 
+ * @param {HttpResponse} res 
+ */
 exports.logout = (req, res) => {
   res.clearCookie('token');
   res.status(200).json({
@@ -188,6 +193,12 @@ exports.logout = (req, res) => {
   })
 }
 
+/**
+ * 로그인 여부 체크
+ * JWT 미들웨어 거치기 때문에 무조건 True 반환
+ * @param {HttpRequest} req 
+ * @param {HttpResponse} res 
+ */
 exports.check = (req, res) => {
   res.status(200).json({
     success: true,
@@ -201,60 +212,62 @@ exports.check = (req, res) => {
  * @param {HttpResponse} res 
  */
 exports.changeUserPassword = (req, res) => {
-  const database = new Database();
-  const {id, current_password, new_password} = req.body;
-  let query1 = `SELECT password, salt FROM USERS WHERE userid = "${id}";`;
+  const id = req.decoded['user_id'];
+  const {current_password, new_password} = req.body;
+  let query = `SELECT password, salt FROM USERS WHERE userid = ?;`;
 
-  const getData = (result) => {
+  const getUserData = ({result, connection}) => {
     if(result.length === 1) {
       let dbPassword = result[0].password;
       let salt = result[0].salt;
-      return {dbPassword, salt};
+      return {dbPassword, salt, connection};
     }
     else {
-      throw new Error();
+      throw new Error("wrong id");
     }
   }
 
-  const check = (data) => {
+  const changePw= (data) => {
+    // 기존 비밀번호하고 같으면 throw
     let oldPassword = crypto.pbkdf2Sync(new_password, data.salt, 100000, 64, 'sha512').toString('base64');
     if(data.dbPassword === oldPassword) {
-      res.status(200).json({
-        msg: 'fail'
-      });
-      return;
+      throw new Error("same password");
     }
+
     let hashPassword = crypto.pbkdf2Sync(current_password, data.salt, 100000, 64, 'sha512').toString('base64');
     if(data.dbPassword === hashPassword) {
-      let salt = crypto.randomBytes(64).toString('base64');
-      let hashPassword2 = crypto.pbkdf2Sync(new_password, salt, 100000, 64, 'sha512').toString('base64');
-      let query2 = `UPDATE USERS SET password = "${hashPassword2}", salt = "${salt}" WHERE userid = "${id}";`;
-      database.query(query2)
-      .then(respond)
-      .catch(onError)
+      let newSalt = crypto.randomBytes(64).toString('base64');
+      let newHashPassword = crypto.pbkdf2Sync(new_password, newSalt, 100000, 64, 'sha512').toString('base64');
+      let updateQuery = `UPDATE USERS SET password = ?, salt = ? WHERE userid = ?;`;
+      const updateParams = [newHashPassword, newSalt, id]
+      return pool.safeQuery(data.connection, updateQuery, updateParams)
+    } else {
+      throw new Error("wrong password");
     }
-    else {
-      res.status(200).json({
-        msg: 'fail'
-      })
-    }
-    database.end();
   }
 
-  const respond = () => {
+  const respond = ({result}) => {
+    console.log(result);
     res.status(200).json({
       msg: 'success'
     })
   }
 
+  const check = (conn) => {
+    pool.safeQuery(conn, query, [id])
+    .then(getUserData)
+    .then(changePw)
+    .then(respond)
+    .catch(onError)
+  }
+
   const onError = (error) => {
-    res.status(400).json({
+    res.status(500).json({
       msg: error.message
     })
   }
 
-  database.query(query1)
-  .then(getData)
+  pool.connect()
   .then(check)
   .catch(onError)
 }
