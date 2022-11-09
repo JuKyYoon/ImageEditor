@@ -135,30 +135,37 @@ exports.login = (req, res) => {
  * @param {HttpResponse} res 
  */
 exports.register = (req, res) => {
-  const database = new Database();
   const { id, password, answer, question} = req.body
+
+  // 비밀번호 암호화
   let salt = crypto.randomBytes(64).toString('base64');
   let hashPassword = crypto.pbkdf2Sync(password, salt, 100000, 64, 'sha512').toString('base64');
-  let date = moment().format('YYYY-MM-DD HH:mm:ss');
-  let query = `INSERT INTO USERS (userid, password, salt, question, answer, create_date) VALUES
-               ("${id}", "${hashPassword}", "${salt}", "${question}", "${answer}", "${date}")`;
+
+  const params = [id, hashPassword, salt, question, answer];
+  let query = `INSERT INTO USERS (userid, password, salt, question, answer) VALUES (?, ?, ?, ?, ?)`;
                
   const respond = (result) => {
+    console.log(result);
     res.status(200).json({
       msg: 'success'
     })
   }
 
   const onError = (error) => {
-    res.status(400).json({
+    res.status(500).json({
       msg: error.message
     })
   }
 
-  database.query(query)
-  .then(respond)
-  .then(database.end())
-  .catch(onError)
+  const check = (conn) => {
+    pool.safeQuery(conn, query, params)
+    .then(respond)
+    .catch(onError)
+  }
+    
+  pool.connect()
+   .then(check)
+   .catch(onError)
 }
 
 exports.logout = (req, res) => {
