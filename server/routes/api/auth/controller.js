@@ -11,14 +11,17 @@ const moment = require('moment');
  */
 exports.dupCheck = (req, res) => {
   const {id} = req.body;
-  let query = `SELECT EXISTS (SELECT * FROM USERS WHERE userid = "${id}") as success`;
+  const params = [id]
+  let query = `SELECT EXISTS (SELECT * FROM USERS WHERE userid = "?") as success`;
 
+  // 실패 핸들러
   const onError = (error) => {
-    res.status(400).json({
+    res.status(500).json({
       msg: error.message
     })
   }
 
+  // 성공 핸들러
   const respond = ({connection, result}) => {
     if(result[0].success) {
       res.status(200).json({
@@ -41,15 +44,14 @@ exports.dupCheck = (req, res) => {
   }
 
   const check = (conn) => {
-    pool.query(conn, query)
+    pool.safeQuery(conn, query, params)
     .then(respond)
     .catch(onError)
   }
-
+    
   pool.connect()
-  .then(check)
-  .catch(onError)
-
+   .then(check)
+   .catch(onError)
 }
 
 /**

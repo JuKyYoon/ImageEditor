@@ -55,6 +55,15 @@ class Pool {
     });
   }
 
+  safeQuery = (connection, sql, params) => {
+    return new Promise((resolve, reject) => {
+      connection.query(sql, params, (err, result) => {
+        if (err) reject(err);
+        resolve({connection, result});
+      });
+    });
+  }
+
   release = (connection) => {
     return new Promise((resolve, reject) => {
       // if (err) reject(err);
@@ -63,23 +72,6 @@ class Pool {
     });
   }
 }
-
-class Connection {
-  constructor() {
-    this.connetion = mysql.createPool(config).getConnection();
-  }
-}
-
-
-
-
-
-
-
-
-
-
-
 
 const pool = new Pool();
 
