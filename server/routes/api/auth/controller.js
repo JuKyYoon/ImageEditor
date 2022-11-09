@@ -60,27 +60,34 @@ exports.dupCheck = (req, res) => {
  * @param {HttpResponse} res 
  */
 exports.login = (req, res) => {
-  const database = new Database();
   const { id, password } = req.body;
-  const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-  console.log(ip);
-  let date = moment().format('YYYY-MM-DD HH:mm:ss');
-  let query = `SELECT password, salt FROM USERS WHERE userid = "${id}";`;
-  let query2 = `UPDATE USERS SET login_date = "${date}" WHERE userid = "${id}";`;
-  // , ip = INET_ATON"${ip}"
+  const params = [id];
+  let query = `SELECT password, salt FROM USERS WHERE userid = ?;`;
 
-  const getData = (result) => {
+  if(!id || !password) {
+    res.status(400).json({
+      msg: "no id or no password"
+    })
+    return;
+  }
+
+  // DB에서 유저 정보 가져온다.
+  const getUserData = ({connection, result}) => {
     if(result.length === 1) {
       let dbPassword = result[0].password;
       let salt = result[0].salt;
-      return {dbPassword, salt};
-    }
-    else {
+      
+      return new Promise((resolve) => {
+        connection.release();
+        resolve({dbPassword, salt});
+      })
+    } else {
       throw new Error('wrong id');
     }
   }
 
-  const check = (data) => {
+  // 가져온 유저 비밀번호를 이용해 체크하고, JWT을 생성한다.
+  const genAccessToken = (data) => {
     let hashPassword = crypto.pbkdf2Sync(password, data.salt, 100000, 64, 'sha512').toString('base64');
     if(data.dbPassword === hashPassword) {
       return new Promise((resolve, reject) => {
@@ -93,10 +100,9 @@ exports.login = (req, res) => {
             expiresIn: '3h'
           },
           (error, token) => {
-            if (error) reject(error);
-            else {
-              database.query(query2)
-              .catch(onError)
+            if (error) {
+              reject(error)
+            } else {
               resolve(token);
             }
           }
@@ -108,6 +114,7 @@ exports.login = (req, res) => {
     }
   }
 
+  // 쿠키에 토큰 저장하고 성공 반환
   const respond = (token) => {
     res.cookie('token', token, {maxAge: 1000*60*60*3});
     res.status(200).json({
@@ -116,17 +123,23 @@ exports.login = (req, res) => {
   }
 
   const onError = (error) => {
-    res.status(400).json({
+    res.status(500).json({
       msg: error.message
     })
   }
 
-  database.query(query)
-  .then(getData)
-  .then(check)
-  .then(respond)
-  .catch(onError)
+  const check = (conn) => {
+    pool.safeQuery(conn, query, params)
+    .then(getUserData)
+    .then(genAccessToken)
+    .then(respond)
+    .catch(onError)
+  }
 
+
+  pool.connect()
+    .then(check)
+    .catch(onError)
 }
 
 /**
