@@ -2,7 +2,6 @@ const jwt = require("jsonwebtoken");
 const {Database, pool} = require('../../../database/index');
 const secretObj = require('../../../config/jwt');
 const crypto = require('crypto');
-const moment = require('moment');
 
 /**
  * 아이디 중복 체크
@@ -79,6 +78,7 @@ exports.login = (req, res) => {
       
       return new Promise((resolve) => {
         connection.release();
+        console.log("MySQL pool released: threadId " + connection.threadId);
         resolve({dbPassword, salt});
       })
     } else {
@@ -157,10 +157,16 @@ exports.register = (req, res) => {
   const params = [id, hashPassword, salt, question, answer];
   let query = `INSERT INTO USERS (userid, password, salt, question, answer) VALUES (?, ?, ?, ?, ?)`;
                
-  const respond = (result) => {
-    console.log(result);
-    res.status(200).json({
-      msg: 'success'
+  const respond = ({connection, result}) => {
+    new Promise((resolve) => {
+      connection.release();
+      resolve();
+    })
+    .then(() => {
+      console.log("MySQL pool released: threadId " + connection.threadId);
+      res.status(200).json({
+        msg: 'success'
+      })
     })
   }
 
@@ -246,10 +252,17 @@ exports.changeUserPassword = (req, res) => {
     }
   }
 
-  const respond = ({result}) => {
-    console.log(result);
-    res.status(200).json({
-      msg: 'success'
+
+  const respond = ({result, connection}) => {
+    new Promise((resolve) => {
+      connection.release();
+      resolve();
+    })
+    .then(() => {
+      console.log("MySQL pool released: threadId " + connection.threadId);
+      res.status(200).json({
+        msg: 'success'
+      })
     })
   }
 
