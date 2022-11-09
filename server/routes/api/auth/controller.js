@@ -348,52 +348,60 @@ exports.findPassword = (req, res) => {
  * @param {HttpResponse} res 
  */
 exports.delete = (req, res) => {
-  const database = new Database();
-  const {id, password, } = req.body;
-  let query1 = `SELECT password, salt FROM USERS WHERE userid = "${id}";`;
+  const {password} = req.body;
+  const id = req.decoded['user_id']
+  let query1 = `SELECT password, salt FROM USERS WHERE userid = ?;`;
 
-  const getData = (result) => {
+  const getUserData = ({result, connection}) => {
     if(result.length === 1) {
       let dbPassword = result[0].password;
       let salt = result[0].salt;
-      return {dbPassword, salt};
+      return {dbPassword, salt, connection};
     }
     else {
-      throw new Error();
+      throw new Error("wrong id");
     }
   }
 
-  const check = (data) => {
+  const checkPassword = (data) => {
     let hashPassword = crypto.pbkdf2Sync(password, data.salt, 100000, 64, 'sha512').toString('base64');
     if(data.dbPassword === hashPassword) {
-      let query2 = `DELETE FROM USERS WHERE userid="${id}";`;
-      database.query(query2)
-      .then(respond)
-      .catch(onError)
+      let query2 = `DELETE FROM USERS WHERE userid=?;`;
+      return pool.safeQuery(data.connection, query2, [id])
+    } else {
+      throw new Error('wrong password')
     }
-    else {
-      res.status(200).json({
-        msg: 'fail'
-      })
-    }
-    database.end();
   }
 
-  const respond = () => {
-    res.clearCookie('token');
-    res.status(200).json({
-      msg: 'success'
+  const respond = ({connection}) => {
+    new Promise((resolve) => {
+      connection.release();
+      resolve();
+    })
+    .then(() => {
+      console.log("MySQL pool released: threadId " + connection.threadId);
+      res.clearCookie('token');
+      res.status(200).json({
+        msg: 'success',
+      })
     })
   }
 
   const onError = (error) => {
-    res.status(400).json({
+    res.status(500).json({
       msg: error.message
     })
   }
 
-  database.query(query1)
-  .then(getData)
-  .then(check)
-  .catch(onError)
+  const check = (conn) => {
+    pool.safeQuery(conn, query1, [id])
+      .then(getUserData)
+      .then(checkPassword)
+      .then(respond)
+      .catch(onError)
+  }
+
+  pool.connect()
+    .then(check)
+    .catch(onError)
 }
