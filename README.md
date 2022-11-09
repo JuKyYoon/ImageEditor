@@ -31,7 +31,8 @@ We used some references
 
 ## How to start  
 Before launching the below code open mysql and set [config](https://github.com/hbseo/image_editor/tree/master/server/config).   
-You can start editor by executing following command.  
+You can start editor by executing following command.
+
 * client  
 ```
 npm install
@@ -40,7 +41,19 @@ npm run start
 * server  
 ```
 npm run serve
-```  
+```
+
+* .env
+```
+PORT=8000
+SESSION_DB_USER=
+SESSION_DB_PW=
+SESSION_DB_NAME=
+REACT_APP_UNSPLASH_PUBLIC_KEY=
+REACT_APP_CORS_LINK=localhost:8000
+REACT_APP_JWT_SECRET_KEY=
+
+```
 And then access it by using a browser. [http://localhost:8080](http://localhost:8080)  
 Server is running on 8000 port.  
 Dependency conflicts may happen.  
